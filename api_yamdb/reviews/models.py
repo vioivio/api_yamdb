@@ -114,8 +114,8 @@ class Title(models.Model):
         max_length=200,
         db_index=True
     )
-    year = models.IntegerField(
-        'Год выпуска',
+    date = models.DatetimeField(
+        'Дата выпуска',
         validators=(validate_date,)
     )
     category = models.ForeignKey(
