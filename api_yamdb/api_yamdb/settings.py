@@ -21,7 +21,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'user'
+    'user.apps.UserConfig',
+    'api.apps.ApiConfig',
+    'reviews.apps.ReviewsConfig',
 ]
 
 MIDDLEWARE = [
@@ -102,7 +104,7 @@ REST_FRAMEWORK = {
     )
 }
 
-AUTH_USER_MODEL = 'user.CustomUser'
+AUTH_USER_MODEL = 'user.User'
 
 SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
