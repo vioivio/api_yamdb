@@ -1,6 +1,4 @@
-from typing import Any, Dict
 from rest_framework import serializers
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import CustomUser
 
 
@@ -11,5 +9,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class TokenSerializer(serializers.Serializer):
+    # Использвуется username и confirmation code для получ
+
     username = serializers.CharField()
-    #confirmation code(ind)
+    # confirmation code(ind)

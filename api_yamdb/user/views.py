@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, views
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -28,6 +28,9 @@ class TokenView(views.APIView):
         serializer.is_valid(raise_exception=True)
         username = serializer.data.get('username')
         user = get_object_or_404(CustomUser, username=username)
-        #confirmation_code (in developing)
+        # confirmation_code (in developing)
         token = RefreshToken.for_user(user)
+
+        # Сделать правильный статус
+
         return Response({'token': str(token.access_token)}, status=200)

@@ -1,5 +1,9 @@
 from rest_framework import permissions
 
+"""
+    Поменять permissions по требованиям
+"""
+
 
 class UserProfilePermission(permissions.BasePermission):
 
