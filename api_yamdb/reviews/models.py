@@ -114,7 +114,7 @@ class Title(models.Model):
         max_length=200,
         db_index=True
     )
-    date = models.DatetimeField(
+    date = models.DateTimeField(
         'Дата выпуска',
         validators=(validate_date,)
     )
