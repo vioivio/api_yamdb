@@ -4,11 +4,11 @@ from rest_framework import permissions
 class UserProfilePermission(permissions.BasePermission):
 
     def has_permission(self, request, view):
-        if view.kwargs['username'] == 'me':
-            return True
         return request.user.check_role == 'admin'
 
     def has_object_permission(self, request, view, obj):
+        if view.kwargs['username'] == 'me':
+            return True
         return request.user.check_role == 'admin'
 
 

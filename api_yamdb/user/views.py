@@ -21,11 +21,11 @@ class UserViewSet(viewsets.ModelViewSet):
             return self.request.user
         return super().get_object()
 
+
 class TokenView(views.APIView):
-    
     def post(self, request):
         serializer = TokenSerializer(data=request.data)
-        serializer.is_valid()
+        serializer.is_valid(raise_exception=True)
         username = serializer.data.get('username')
         user = get_object_or_404(CustomUser, username=username)
         #confirmation_code (in developing)
