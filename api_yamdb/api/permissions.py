@@ -17,6 +17,7 @@ class PrivilegeOrReadOnly(permissions.BasePermission):
                 or request.user.is_admin
                 or request.user.is_moderator
                 or obj.author == request.user
+                or request.user.is_superuser
         )
 
     def has_permission(self, request, view):
