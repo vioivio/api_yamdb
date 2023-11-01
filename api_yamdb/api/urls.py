@@ -6,11 +6,11 @@ from . import views
 
 yamdb_v1_router = DefaultRouter()
 
-yamdb_v1_router.register(
-    'auth/signup',
-    views.SignUpCreate,
-    basename='signup'
-)
+# yamdb_v1_router.register(
+#     'auth/signup',
+#     views.SignUpCreate,
+#     basename='signup'
+# )
 yamdb_v1_router.register(
     r'categories',
     views.CategoryViewSet,
@@ -39,11 +39,11 @@ yamdb_v1_router.register(
 )
 yamdb_v1_router.register(
     'users',
-    views.UserProfileViewSet,
+    views.UserViewSet,
     basename='profile'
 )
 
 urlpatterns = [
-    path('v1/auth/token/', views.get_jwt_token, name='token'),
+    path('v1/auth/token/', views.TokenView, name='token'),
     path('v1/', include(yamdb_v1_router.urls)),
 ]
