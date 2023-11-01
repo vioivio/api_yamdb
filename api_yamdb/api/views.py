@@ -46,8 +46,6 @@ class TokenView(views.APIView):
         return Response({'token': str(token.access_token)}, status=200)
 
 
-
-
 class CategoryViewSet(
     mixins.CreateModelMixin,
     mixins.DestroyModelMixin,
