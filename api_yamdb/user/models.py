@@ -3,13 +3,13 @@ from django.contrib.auth.models import AbstractUser
 
 
 ROLES = (
-    ('admin', 'Admin'),
-    ('moderator', 'Moderator'),
-    ('user', 'User')
+    ('admin', 'admin'),
+    ('moderator', 'moderator'),
+    ('user', 'user')
 )
 
 
-class CustomUser(AbstractUser):
+class User(AbstractUser):
     email = models.EmailField(max_length=254,
                               unique=True,
                               verbose_name='email')
@@ -26,5 +26,13 @@ class CustomUser(AbstractUser):
                             verbose_name='Role')
 
     @property
-    def check_role(self):
-        return self.role
+    def is_admin(self):
+        return self.role == 'admin'
+
+    @property
+    def is_moderator(self):
+        return self.role == 'moderator'
+
+    @property
+    def is_user(self):
+        return self.role == 'user'
