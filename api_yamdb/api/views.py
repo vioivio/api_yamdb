@@ -46,8 +46,6 @@ class TokenView(views.APIView):
         return Response({'token': str(token.access_token)}, status=200)
 
 
-
-
 class CategoryViewSet(
     mixins.CreateModelMixin,
     mixins.DestroyModelMixin,
@@ -65,6 +63,7 @@ class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all().order_by('name')
     serializer_class = TitleSerializer
     permission_classes = (AdminOrReadOnly,)
+    http_method_names = ['get', 'post', 'patch', 'delete', 'create']
 
 
 class GenreViewSet(
@@ -84,6 +83,7 @@ class GenreViewSet(
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     permission_classes = (PrivilegeOrReadOnly,)
+    http_method_names = ['get', 'post', 'patch', 'delete', 'create']
 
     def get_queryset(self):
         title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
@@ -98,6 +98,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = (PrivilegeOrReadOnly,)
+    http_method_names = ['get', 'post', 'patch', 'delete', 'create']
 
     def get_queryset(self):
         review = get_object_or_404(
