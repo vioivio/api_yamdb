@@ -5,6 +5,18 @@ from reviews.models import Category, Comment, Genre, Review, Title
 from user.models import User
 
 
+class SignUpSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    username = serializers.CharField()
+
+    def validate(self, attrs):
+        if attrs['username'] == 'me':
+            raise serializers.ValidationError(
+                {"Signup error": "Недоступный username"}
+            )
+        return attrs
+
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ('username', 'email', 'first_name', 'last_name', 'bio', 'role')
@@ -12,10 +24,14 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class TokenSerializer(serializers.Serializer):
-    # Использвуется username и confirmation code для получ
-
     username = serializers.CharField()
-    # confirmation code(ind)
+    confirmation_code = serializers.CharField()
+
+    def validate(self, attrs):
+        if not User.objects.filter(username=attrs['username'],
+                                   confirmation_code=attrs['confirmation_code']):
+            raise serializers.ValidationError({"auth_errors":"Неверные данные авторизации"})
+        return attrs
 
 
 class CategorySerializer(serializers.ModelSerializer):

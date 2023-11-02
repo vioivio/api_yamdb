@@ -24,6 +24,10 @@ class User(AbstractUser):
                             blank=True,
                             default='user',
                             verbose_name='Role')
+    confirmation_code = models.CharField(max_length=254,
+                                         blank=True,
+                                         null=True,
+                                         verbose_name='confirmation_code')
 
     @property
     def is_admin(self):

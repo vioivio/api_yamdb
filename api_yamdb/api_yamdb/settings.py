@@ -29,7 +29,7 @@ INSTALLED_APPS = [
    
 ]
 
-AUTH_USER_MODEL = 'user.CustomUser'
+AUTH_USER_MODEL = 'user.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -133,3 +133,13 @@ STATICFILES_DIRS = ((BASE_DIR / 'static/'),)
 SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
     }
+
+# Вывод письма в консоль
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Создание папки с письмом
+
+#EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+
+EMAIL_FILE_PATH = BASE_DIR / 'sent_emails'

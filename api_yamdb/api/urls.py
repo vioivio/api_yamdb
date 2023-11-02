@@ -44,6 +44,7 @@ yamdb_v1_router.register(
 )
 
 urlpatterns = [
-    path('v1/auth/token/', views.TokenView, name='token'),
+    path('v1/auth/token/', views.TokenView.as_view(), name='token'),
+    path('v1/auth/signup/', views.SignUpCreate.as_view(), name='signup'),
     path('v1/', include(yamdb_v1_router.urls)),
 ]

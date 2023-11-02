@@ -1,13 +1,11 @@
 from django.shortcuts import get_object_or_404
-
-from rest_framework import viewsets, views
-
+from django.core.mail import send_mail
+from rest_framework import viewsets, views, status
+from django.conf import settings
+from django.contrib.auth.tokens import default_token_generator
 from rest_framework.response import Response
-
 from rest_framework import (filters, mixins, viewsets)
-
 from reviews.models import (Category, Genre, Review, Title, Comment)
-
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -15,8 +13,29 @@ from user.models import User
 from .permissions import (AdminOrReadOnly, PrivilegeOrReadOnly, UserProfilePermission)
 from .serializers import (
     TitleSerializer, CategorySerializer, GenreSerializer,
-    CommentSerializer, ReviewSerializer, UserSerializer, TokenSerializer
+    CommentSerializer, ReviewSerializer, UserSerializer, TokenSerializer,
+    SignUpSerializer
 )
+
+
+class SignUpCreate(views.APIView):
+    def post(self, request):
+        serializer = SignUpSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        email = serializer.data.get('email')
+        username = serializer.data.get('username')
+        user, code = User.objects.get_or_create(email=email, username=username)
+        confirmation_code = default_token_generator.make_token(user)
+        user.confirmation_code = confirmation_code
+        user.save()
+        send_mail(
+            subject='Confirmation_code',
+            message=f"Code: {confirmation_code}",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email],
+            fail_silently=False
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -37,13 +56,12 @@ class TokenView(views.APIView):
         serializer = TokenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         username = serializer.data.get('username')
-        user = get_object_or_404(User, username=username)
-        # confirmation_code (in developing)
+        confirmation_code = serializer.data.get('confirmation_code')
+        user = get_object_or_404(User, username=username,
+                                 confirmation_code=confirmation_code)
         token = RefreshToken.for_user(user)
-
-        # Сделать правильный статус
-
-        return Response({'token': str(token.access_token)}, status=200)
+        return Response({'token': str(token.access_token)},
+                        status=status.HTTP_200_OK)
 
 
 class CategoryViewSet(
