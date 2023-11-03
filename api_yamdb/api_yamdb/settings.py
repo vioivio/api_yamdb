@@ -26,8 +26,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'reviews.apps.ReviewsConfig',
-   
 ]
+
+AUTH_USER_MODEL = 'user.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -57,6 +58,12 @@ TEMPLATES = [
         },
     },
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
 
 WSGI_APPLICATION = 'api_yamdb.wsgi.application'
 
@@ -121,3 +128,17 @@ SIMPLE_JWT = {
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = ((BASE_DIR / 'static/'),)
+
+SIMPLE_JWT = {
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    }
+
+# Вывод письма в консоль
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Вывод в файл
+
+# EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+
+EMAIL_FILE_PATH = BASE_DIR / 'sent_emails'

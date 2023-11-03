@@ -1,4 +1,3 @@
-from django.contrib.auth.models import AbstractUser
 from django.core.validators import (
     MaxValueValidator,
     MinValueValidator,
@@ -31,7 +30,7 @@ class Category(models.Model):
     class Meta:
         verbose_name = 'Категория'
 
-    def __str__ (self):
+    def __str__(self):
         return self.slug
 
 
