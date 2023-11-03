@@ -26,7 +26,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'reviews.apps.ReviewsConfig',
-   
 ]
 
 AUTH_USER_MODEL = 'user.User'
@@ -138,8 +137,8 @@ SIMPLE_JWT = {
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-# Создание папки с письмом
+# Вывод в файл
 
-#EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 
 EMAIL_FILE_PATH = BASE_DIR / 'sent_emails'

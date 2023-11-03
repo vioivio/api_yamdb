@@ -1,3 +1,3 @@
 # api_yamdb
 api_yamdb
-vhgbch
+НЕ ЗАБЫТЬ ЗАПОЛНИТЬ!!!!

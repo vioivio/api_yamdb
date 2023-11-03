@@ -6,11 +6,6 @@ from . import views
 
 yamdb_v1_router = DefaultRouter()
 
-# yamdb_v1_router.register(
-#     'auth/signup',
-#     views.SignUpCreate,
-#     basename='signup'
-# )
 yamdb_v1_router.register(
     r'categories',
     views.CategoryViewSet,

@@ -1,21 +1,29 @@
-from django.shortcuts import get_object_or_404
 from django.core.mail import send_mail
-from rest_framework import viewsets, views, status
 from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
-from rest_framework.response import Response
-from rest_framework import (filters, mixins, viewsets)
-from reviews.models import (Category, Genre, Review, Title, Comment)
+from django.shortcuts import get_object_or_404
+from rest_framework import filters, mixins, status, views, viewsets
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from reviews.models import Category, Genre, Review, Title
 from user.models import User
-from .permissions import (AdminOrReadOnly, PrivilegeOrReadOnly, UserProfilePermission)
-from .serializers import (
-    TitleSerializer, CategorySerializer, GenreSerializer,
-    CommentSerializer, ReviewSerializer, UserSerializer, TokenSerializer,
-    SignUpSerializer
-)
+
+from .permissions import (AdminOrReadOnly,
+                          OnlyAdminPermission,
+                          PrivilegeOrReadOnly,
+                          UserProfilePermission,
+                          )
+from .serializers import (CategorySerializer,
+                          CommentSerializer,
+                          GenreSerializer,
+                          ReviewSerializer,
+                          SignUpSerializer,
+                          TitleSerializer,
+                          TokenSerializer,
+                          UserSerializer
+                          )
 
 
 class SignUpCreate(views.APIView):
@@ -41,14 +49,29 @@ class SignUpCreate(views.APIView):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated, UserProfilePermission]
+    permission_classes = [IsAuthenticated,
+                          OnlyAdminPermission | UserProfilePermission]
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('username',)
     lookup_url_kwarg = 'username'
     lookup_field = 'username'
 
     def get_object(self):
         if self.kwargs['username'] == 'me':
-            return self.request.user
+            user = self.request.user
+            self.check_object_permissions(self.request, user)
+            return user
         return super().get_object()
+
+    def destroy(self, request, *args, **kwargs):
+        if self.kwargs['username'] == 'me':
+            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        return super().destroy(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        if request.method == 'PUT' and self.kwargs['username'] != 'me':
+            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        return super().update(request, *args, **kwargs)
 
 
 class TokenView(views.APIView):
