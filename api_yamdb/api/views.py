@@ -103,13 +103,6 @@ class CategoryViewSet(
     search_fields = ('name',)
 
 
-# class TitleViewSet(viewsets.ModelViewSet):
-#     queryset = Title.objects.all().order_by('name')
-#     serializer_class = TitleSerializer
-#     permission_classes = (AdminOrReadOnly,)
-#     http_method_names = ['get', 'post', 'patch', 'delete', 'create']
-
-
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all().order_by('name')
     serializer_class = TitleSerializer
