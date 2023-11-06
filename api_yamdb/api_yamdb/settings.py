@@ -129,8 +129,7 @@ REST_FRAMEWORK = {
 AUTH_USER_MODEL = 'user.User'
 
 SIMPLE_JWT = {
-    "AUTH_HEADER_TYPES": ("Bearer",),
-    }
+    "AUTH_HEADER_TYPES": ("Bearer",), }
 
 # Static files (CSS, JavaScript, Images)
 
@@ -139,8 +138,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = ((BASE_DIR / 'static/'),)
 
 SIMPLE_JWT = {
-    "AUTH_HEADER_TYPES": ("Bearer",),
-    }
+    "AUTH_HEADER_TYPES": ("Bearer",), }
 
 # Вывод письма в консоль
 

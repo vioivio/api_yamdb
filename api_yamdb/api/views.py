@@ -1,6 +1,7 @@
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
+from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from rest_framework import filters, mixins, status, views, viewsets
 from rest_framework.permissions import IsAuthenticated
@@ -101,23 +102,20 @@ class CategoryViewSet(
     permission_classes = (AdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
-
-
-# class TitleViewSet(viewsets.ModelViewSet):
-#     queryset = Title.objects.all().order_by('name')
-#     serializer_class = TitleSerializer
-#     permission_classes = (AdminOrReadOnly,)
-#     http_method_names = ['get', 'post', 'patch', 'delete', 'create']
+    lookup_field = 'slug'
+    lookup_url_kwarg = 'slug'
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.all().order_by('name')
     serializer_class = TitleSerializer
     permission_classes = (AdminOrReadOnly,)
     http_method_names = ['get', 'post', 'patch', 'delete', 'create']
     create_serializer_class = TitleCreateSerializer
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
+
+    def get_queryset(self):
+        return Title.objects.all().annotate(rating=Avg('reviews__score'))
 
     def get_serializer_class(self):
         if self.request.method == 'POST' or self.request.method == 'PATCH':
@@ -144,6 +142,8 @@ class GenreViewSet(
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     http_method_names = ['get', 'post', 'patch', 'delete', 'create']
+    lookup_field = 'slug'
+    lookup_url_kwarg = 'slug'
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
