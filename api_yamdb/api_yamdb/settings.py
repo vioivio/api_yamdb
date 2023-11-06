@@ -21,11 +21,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'user.apps.UserConfig',
-    'api.apps.ApiConfig',
     'rest_framework',
     'django_filters',
     'reviews.apps.ReviewsConfig',
+    'user.apps.UserConfig',
+    'api.apps.ApiConfig',
 ]
 
 AUTH_USER_MODEL = 'user.User'
@@ -114,14 +114,22 @@ REST_FRAMEWORK = {
 
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 5
+    'PAGE_SIZE': 5,
+
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.UserRateThrottle',
+        'rest_framework.throttling.AnonRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'user': '1000/hour',
+        'anon': '100/day',
+    },
 }
 
 AUTH_USER_MODEL = 'user.User'
 
 SIMPLE_JWT = {
-    "AUTH_HEADER_TYPES": ("Bearer",),
-    }
+    "AUTH_HEADER_TYPES": ("Bearer",), }
 
 # Static files (CSS, JavaScript, Images)
 
@@ -130,8 +138,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = ((BASE_DIR / 'static/'),)
 
 SIMPLE_JWT = {
-    "AUTH_HEADER_TYPES": ("Bearer",),
-    }
+    "AUTH_HEADER_TYPES": ("Bearer",), }
 
 # Вывод письма в консоль
 
