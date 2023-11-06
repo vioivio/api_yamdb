@@ -6,9 +6,11 @@ from rest_framework import filters, mixins, status, views, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+from django_filters.rest_framework import DjangoFilterBackend
 
 from reviews.models import Category, Genre, Review, Title
 from user.models import User
+from .filters import TitleFilter
 
 from .permissions import (AdminOrReadOnly,
                           OnlyAdminPermission,
@@ -22,7 +24,8 @@ from .serializers import (CategorySerializer,
                           SignUpSerializer,
                           TitleSerializer,
                           TokenSerializer,
-                          UserSerializer
+                          UserSerializer,
+                          TitleCreateSerializer,
                           )
 
 
@@ -100,11 +103,32 @@ class CategoryViewSet(
     search_fields = ('name',)
 
 
+# class TitleViewSet(viewsets.ModelViewSet):
+#     queryset = Title.objects.all().order_by('name')
+#     serializer_class = TitleSerializer
+#     permission_classes = (AdminOrReadOnly,)
+#     http_method_names = ['get', 'post', 'patch', 'delete', 'create']
+
+
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all().order_by('name')
     serializer_class = TitleSerializer
     permission_classes = (AdminOrReadOnly,)
     http_method_names = ['get', 'post', 'patch', 'delete', 'create']
+    create_serializer_class = TitleCreateSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = TitleFilter
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST' or self.request.method == 'PATCH':
+            return self.create_serializer_class
+        return super().get_serializer_class()
+
+    def update(self, request, *args, **kwargs):
+        if request.method == 'PUT':
+            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+        return super().update(request, *args, **kwargs)
 
 
 class GenreViewSet(
@@ -119,6 +143,7 @@ class GenreViewSet(
     permission_classes = (AdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
+    http_method_names = ['get', 'post', 'patch', 'delete', 'create']
 
 
 class ReviewViewSet(viewsets.ModelViewSet):

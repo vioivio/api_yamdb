@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from reviews.models import Category, Comment, Genre, Review, Title
 from user.models import User
+from datetime import timezone
 
 
 class SignUpSerializer(serializers.Serializer):
@@ -83,6 +84,30 @@ class TitleSerializer(serializers.ModelSerializer):
         model = Title
 
 
+class TitleCreateSerializer(serializers.ModelSerializer):
+    genre = serializers.SlugRelatedField(
+        many=True,
+        read_only=False,
+        queryset=Genre.objects.all(),
+        slug_field='slug'
+    )
+    category = serializers.SlugRelatedField(
+        slug_field='slug',
+        queryset=Category.objects.all()
+    )
+
+    class Meta:
+        model = Title
+        fields = '__all__'
+
+    def validate_date(value):
+        now = timezone.now().year
+        if value > now:
+            raise serializers.ValidationError(
+                f'{value} не может быть больше {now}'
+            )
+
+
 class ReviewSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
         read_only=True,
@@ -103,6 +128,13 @@ class ReviewSerializer(serializers.ModelSerializer):
                 and title.reviews.filter(author=author).exists()):
             raise serializers.ValidationError(
                 f'Отзыв на произведение {title.name} уже существует'
+            )
+        return value
+
+    def validate_score(self, value):
+        if 1 > value > 10:
+            raise serializers.ValidationError(
+                'Оценка может быть от 1 до 10'
             )
         return value
 

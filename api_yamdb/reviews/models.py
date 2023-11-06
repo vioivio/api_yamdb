@@ -80,6 +80,11 @@ class Title(models.Model):
         Genre,
         related_name='titles',
     )
+    rating = models.PositiveIntegerField(
+        'Рейтинг',
+        null=True,
+        blank=True
+    )
 
     class Meta:
         verbose_name = 'Произведение'
