@@ -157,3 +157,14 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.text
+
+
+class Genre_Title(models.Model):
+    title = models.ForeignKey(Title,
+                              on_delete=models.SET_NULL)
+    genre = models.ForeignKey(
+        Genre,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True
+    )
