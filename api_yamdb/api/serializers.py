@@ -11,16 +11,16 @@ class SignUpSerializer(serializers.Serializer):
     email = serializers.EmailField(max_length=256)
     username = serializers.CharField(max_length=150,
                                      validators=[RegexValidator(
-                                          regex='^[a-zA-Z0-9_]+$')])
+                                         regex='^[a-zA-Z0-9_]+$')])
 
     def validate(self, attrs):
-        if (not User.objects.filter(username=attrs['username']).exists() and
-           User.objects.filter(email=attrs['email']).exists()):
+        if (not User.objects.filter(username=attrs['username']).exists()
+           and User.objects.filter(email=attrs['email']).exists()):
             raise serializers.ValidationError({"Signup error":
                                                "Email занят"})
 
-        elif (User.objects.filter(username=attrs['username']).exists() and
-              not User.objects.filter(email=attrs['email']).exists()):
+        elif (User.objects.filter(username=attrs['username']).exists()
+              and not User.objects.filter(email=attrs['email']).exists()):
             raise serializers.ValidationError({"Signup error":
                                                "Username занят"})
         if attrs['username'] == 'me':

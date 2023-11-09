@@ -41,7 +41,7 @@ class SignUpCreate(views.APIView):
         user.confirmation_code = confirmation_code
         user.save()
         send_mail(
-            subject='Confirmation_code',
+            subject='Confirmation code',
             message=f"Code: {confirmation_code}",
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[email],

@@ -7,19 +7,10 @@ from django.db import models
 from .validators import validate_date
 from user.models import User
 
-USER = 'user'
-ADMIN = 'admin'
-MODERATOR = 'moderator'
-
-ROLES_CHOICES = [
-    (USER, USER),
-    (ADMIN, ADMIN),
-    (MODERATOR, MODERATOR),
-]
-
 
 class Category(models.Model):
-    """Модель категории"""
+    """Модель категории."""
+
     name = models.CharField('Название категории', max_length=256)
     slug = models.SlugField(
         unique=True,
@@ -35,7 +26,8 @@ class Category(models.Model):
 
 
 class Genre(models.Model):
-    """Модель жанров"""
+    """Модель жанров."""
+
     name = models.CharField(
         'Жанр',
         max_length=200
@@ -53,7 +45,8 @@ class Genre(models.Model):
 
 
 class Title(models.Model):
-    """Модель произведений"""
+    """Модель произведений."""
+
     name = models.CharField(
         'Название произведения',
         max_length=200,
@@ -89,7 +82,8 @@ class Title(models.Model):
 
 
 class Review(models.Model):
-    """Оценка произведения"""
+    """Оценка произведения."""
+
     title = models.ForeignKey(
         Title,
         on_delete=models.CASCADE,
@@ -131,7 +125,8 @@ class Review(models.Model):
 
 
 class Comment(models.Model):
-    """Модель коммнтариев"""
+    """Модель комментариев."""
+
     review = models.ForeignKey(
         Review,
         on_delete=models.CASCADE,
@@ -157,14 +152,3 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.text
-
-
-class Genre_Title(models.Model):
-    title = models.ForeignKey(Title,
-                              on_delete=models.SET_NULL)
-    genre = models.ForeignKey(
-        Genre,
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True
-    )

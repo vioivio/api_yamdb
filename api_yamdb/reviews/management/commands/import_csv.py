@@ -1,22 +1,22 @@
 import csv
-from typing import Any
+import os
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
-from django.conf.global_settings import STATICFILES_DIRS
 
-from user.models import User
 from reviews.models import (Category,
-                            Genre,
-                            Title,
-                            Review,
                             Comment,
+                            Genre,
+                            Review,
+                            Title
                             )
+from user.models import User
 
-URL = STATICFILES_DIRS + '/data/'
+URL = os.path.join(*settings.STATICFILES_DIRS, 'data/')
 
 
 def category(row):
-    Category.objects.create(
+    Category.objects.get_or_create(
         id=row[0],
         name=row[1],
         slug=row[2]
@@ -24,7 +24,7 @@ def category(row):
 
 
 def title(row):
-    Title.objects.create(
+    Title.objects.get_or_create(
         id=row[0],
         name=row[1],
         year=row[2],
@@ -33,7 +33,7 @@ def title(row):
 
 
 def genre(row):
-    Genre.objects.create(
+    Genre.objects.get_or_create(
         id=row[0],
         name=row[1],
         slug=row[2],
@@ -41,28 +41,28 @@ def genre(row):
 
 
 def review(row):
-    Review.objects.create(
+    Review.objects.get_or_create(
         id=row[0],
-        title=row[1],
+        title_id=row[1],
         text=row[2],
-        author=row[3],
+        author_id=row[3],
         score=row[4],
         pub_date=row[5]
     )
 
 
 def comment(row):
-    Comment.objects.create(
+    Comment.objects.get_or_create(
         id=row[0],
-        review=row[1],
+        review_id=row[1],
         text=row[2],
-        author=row[3],
+        author_id=row[3],
         pub_date=row[4]
     )
 
 
 def user(row):
-    User.objects.create(
+    User.objects.get_or_create(
         id=row[0],
         username=row[1],
         email=row[2],
@@ -74,17 +74,17 @@ def user(row):
 
 
 csv_dict = {
-    URL+'category.csv': category,
-    URL+'comments.csv': comment,
-    URL+'genre.csv': genre,
-    URL+'review.csv': review,
-    URL+'users.csv': user,
-    URL+'titles.csv': title
-    }
+    URL + 'category.csv': category,
+    URL + 'genre.csv': genre,
+    URL + 'titles.csv': title,
+    URL + 'users.csv': user,
+    URL + 'review.csv': review,
+    URL + 'comments.csv': comment
+}
 
 
 class Command(BaseCommand):
-    def handle(self, *args: Any, **options: Any):
+    def handle(self, *args, **options):
         for url, model_create in csv_dict.items():
             with open(url, 'r', encoding='utf-8') as file:
                 csv_data = csv.reader(file)

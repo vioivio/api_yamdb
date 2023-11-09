@@ -140,12 +140,6 @@ STATICFILES_DIRS = ((BASE_DIR / 'static/'),)
 SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",), }
 
-# Вывод письма в консоль
-
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-# Вывод в файл
-
-# EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 
 EMAIL_FILE_PATH = BASE_DIR / 'sent_emails'
