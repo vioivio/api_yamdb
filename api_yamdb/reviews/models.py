@@ -1,80 +1,16 @@
-from django.contrib.auth.models import AbstractUser
-from django.core.validators import (MaxValueValidator, MinValueValidator, RegexValidator)
+from django.core.validators import (
+    MaxValueValidator,
+    MinValueValidator,
+    RegexValidator)
 from django.db import models
 
 from .validators import validate_date
-
-USER = 'user'
-ADMIN = 'admin'
-MODERATOR = 'moderator'
-
-ROLES_CHOICES = [
-    (USER, USER),
-    (ADMIN, ADMIN),
-    (MODERATOR, MODERATOR),
-]
-
-
-class User(AbstractUser):
-    """Модель пользователя"""
-    username = models.CharField(
-        'Имя пользователя',
-        max_length=100,
-        unique=True,
-        blank=False,
-        null=False,
-        validators=[RegexValidator(
-            regex='^[a-zA-Z][a-zA-Z0-9-_\.]{1,20}$'
-        )
-        ]
-    )
-    email = models.EmailField(
-        'Адрес e-mail',
-        max_length=254,
-        unique=True,
-        blank=False,
-        null=False
-    )
-    role = models.CharField(
-        'Роль',
-        max_length=20,
-        choices=ROLES_CHOICES,
-        default=USER,
-        blank=True
-    )
-    bio = models.TextField(
-        'Описание профиля',
-        blank=True,
-    )
-    first_name = models.CharField(
-        'Имя',
-        max_length=150,
-        blank=True
-    )
-    last_name = models.CharField(
-        'Фамилия',
-        max_length=150,
-        blank=True
-    )
-
-    @property
-    def is_admin(self):
-        return self.role == ADMIN
-
-    @property
-    def is_moderator(self):
-        return self.role == MODERATOR
-
-    class Meta:
-        ordering = ('id',)
-        verbose_name = 'Пользователь'
-
-    def __str__(self):
-        return self.username
+from user.models import User
 
 
 class Category(models.Model):
-    """Модель категории"""
+    """Модель категории."""
+
     name = models.CharField('Название категории', max_length=256)
     slug = models.SlugField(
         unique=True,
@@ -85,12 +21,13 @@ class Category(models.Model):
     class Meta:
         verbose_name = 'Категория'
 
-    def __str__ (self):
+    def __str__(self):
         return self.slug
 
 
 class Genre(models.Model):
-    """Модель жанров"""
+    """Модель жанров."""
+  
     name = models.CharField(
         'Жанр',
         max_length=200
@@ -108,14 +45,15 @@ class Genre(models.Model):
 
 
 class Title(models.Model):
-    """Модель произведений"""
+    """Модель произведений."""
+
     name = models.CharField(
         'Название произведения',
         max_length=200,
         db_index=True
     )
-    date = models.DateTimeField(
-        'Дата выпуска',
+    year = models.IntegerField(
+        'Год выпуска',
         validators=(validate_date,)
     )
     category = models.ForeignKey(
@@ -144,7 +82,8 @@ class Title(models.Model):
 
 
 class Review(models.Model):
-    """Оценка произведения"""
+    """Оценка произведения."""
+
     title = models.ForeignKey(
         Title,
         on_delete=models.CASCADE,
@@ -186,7 +125,8 @@ class Review(models.Model):
 
 
 class Comment(models.Model):
-    """Модель коммнтариев"""
+    """Модель комментариев."""
+
     review = models.ForeignKey(
         Review,
         on_delete=models.CASCADE,
