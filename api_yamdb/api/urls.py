@@ -34,7 +34,7 @@ yamdb_v1_router.register(
 )
 yamdb_v1_router.register(
     'users',
-    views.UserViewSet,
+    views.UserProfileViewSet,
     basename='profile'
 )
 
