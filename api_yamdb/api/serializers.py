@@ -7,27 +7,35 @@ from user.models import User
 from datetime import timezone
 
 
-class SignUpSerializer(serializers.Serializer):
-    email = serializers.EmailField(max_length=256)
-    username = serializers.CharField(max_length=150,
-                                     validators=[RegexValidator(
-                                         regex='^[a-zA-Z0-9_]+$')])
+class SignUpSerializer(serializers.ModelSerializer):
 
-    def validate(self, attrs):
-        if (not User.objects.filter(username=attrs['username']).exists()
-           and User.objects.filter(email=attrs['email']).exists()):
-            raise serializers.ValidationError({"Signup error":
-                                               "Email занят"})
+    class Meta:
+        model = User
+        fields = ('email', 'username')
 
-        elif (User.objects.filter(username=attrs['username']).exists()
-              and not User.objects.filter(email=attrs['email']).exists()):
-            raise serializers.ValidationError({"Signup error":
-                                               "Username занят"})
-        if attrs['username'] == 'me':
+    # def validate(self, attrs):
+    #     print('validate')
+    #     if (not User.objects.filter(username=attrs['username']).exists()
+    #        and User.objects.filter(email=attrs['email']).exists()):
+    #         raise serializers.ValidationError({"Signup error":
+    #                                            "Email занят"})
+
+    #     elif (User.objects.filter(username=attrs['username']).exists()
+    #           and not User.objects.filter(email=attrs['email']).exists()):
+    #         raise serializers.ValidationError({"Signup error":
+    #                                            "Username занят"})
+
+    def validate_username(self, attrs):
+        print(attrs)
+        if attrs == 'me':
             raise serializers.ValidationError(
                 {"Signup error": "Недоступный username"}
             )
         return attrs
+
+    def create(self, validated_data):
+        user, code = User.objects.get_or_create(**validated_data)
+        return user
 
 
 class UserSerializer(serializers.ModelSerializer):

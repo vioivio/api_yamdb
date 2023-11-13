@@ -34,12 +34,12 @@ class SignUpCreate(views.APIView):
     def post(self, request):
         serializer = SignUpSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        serializer.save()
         email = serializer.data.get('email')
         username = serializer.data.get('username')
-        user, code = User.objects.get_or_create(email=email, username=username)
+        #user, code = User.objects.get_or_create(email=email, username=username)
+        user = get_object_or_404(User, email=email, username=username)
         confirmation_code = default_token_generator.make_token(user)
-        user.confirmation_code = confirmation_code
-        user.save()
         send_mail(
             subject='Confirmation code',
             message=f"Code: {confirmation_code}",
@@ -83,9 +83,7 @@ class TokenView(views.APIView):
         serializer = TokenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         username = serializer.data.get('username')
-        confirmation_code = serializer.data.get('confirmation_code')
-        user = get_object_or_404(User, username=username,
-                                 confirmation_code=confirmation_code)
+        user = get_object_or_404(User, username=username)
         token = RefreshToken.for_user(user)
         return Response({'token': str(token.access_token)},
                         status=status.HTTP_200_OK)
