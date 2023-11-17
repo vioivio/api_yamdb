@@ -1,41 +1,36 @@
 from django.contrib.auth.tokens import default_token_generator
-from django.core.validators import RegexValidator
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from reviews.models import Category, Comment, Genre, Review, Title
 from user.models import User
-from datetime import timezone
+
+from .validators import validate_me
 
 
-class SignUpSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = User
-        fields = ('email', 'username')
-
-    # def validate(self, attrs):
-    #     print('validate')
-    #     if (not User.objects.filter(username=attrs['username']).exists()
-    #        and User.objects.filter(email=attrs['email']).exists()):
-    #         raise serializers.ValidationError({"Signup error":
-    #                                            "Email занят"})
-
-    #     elif (User.objects.filter(username=attrs['username']).exists()
-    #           and not User.objects.filter(email=attrs['email']).exists()):
-    #         raise serializers.ValidationError({"Signup error":
-    #                                            "Username занят"})
-
-    def validate_username(self, attrs):
-        print(attrs)
-        if attrs == 'me':
-            raise serializers.ValidationError(
-                {"Signup error": "Недоступный username"}
-            )
-        return attrs
+class SignUpSerializer(serializers.Serializer):
+    email = serializers.EmailField(max_length=254)
+    username = serializers.CharField(max_length=150,
+                                     validators=[UnicodeUsernameValidator(),
+                                                 validate_me])
 
     def create(self, validated_data):
-        user, code = User.objects.get_or_create(**validated_data)
+        email = validated_data['email']
+        username = validated_data['username']
+        user, code = User.objects.get_or_create(email=email, username=username)
         return user
+
+    def validate(self, attrs):
+        if (not User.objects.filter(username=attrs['username']).exists()
+           and User.objects.filter(email=attrs['email']).exists()):
+            raise serializers.ValidationError({"Signup error":
+                                               "Email занят"})
+
+        elif (User.objects.filter(username=attrs['username']).exists()
+              and not User.objects.filter(email=attrs['email']).exists()):
+            raise serializers.ValidationError({"Signup error":
+                                               "Username занят"})
+        return attrs
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -108,13 +103,6 @@ class TitleCreateSerializer(serializers.ModelSerializer):
         model = Title
         fields = '__all__'
 
-    def validate_date(value):
-        now = timezone.now().year
-        if value > now:
-            raise serializers.ValidationError(
-                f'{value} не может быть больше {now}'
-            )
-
 
 class ReviewSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
@@ -141,7 +129,6 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     def validate_score(self, attrs):
         if attrs < 1 or attrs > 10:
-            print(attrs, 'raise')
             raise serializers.ValidationError(
                 'Оценка может быть от 1 до 10'
             )

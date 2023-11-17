@@ -1,6 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.core.validators import RegexValidator
+from django.contrib.auth.validators import UnicodeUsernameValidator
+
+from .max_length import (EMAIL_LENGTH,
+                         USERNAME_LENGTH,
+                         BIO_LENGTH,
+                         ROLE_LENGTH)
 
 ROLE_CHOICE = (
     ('admin', 'admin'),
@@ -8,19 +13,24 @@ ROLE_CHOICE = (
     ('user', 'user')
 )
 ADMIN = 'admin'
+
 MODERATOR = 'moderator'
 
 
 class User(AbstractUser):
-    email = models.EmailField(max_length=254,
+    email = models.EmailField(max_length=EMAIL_LENGTH,
                               unique=True,
                               verbose_name='email')
 
-    bio = models.CharField(max_length=300,
+    username = models.CharField(max_length=USERNAME_LENGTH,
+                                unique=True,
+                                validators=[UnicodeUsernameValidator()])
+
+    bio = models.CharField(max_length=BIO_LENGTH,
                            blank=True,
                            verbose_name='biography')
     role = models.CharField(choices=ROLE_CHOICE,
-                            max_length=30,
+                            max_length=ROLE_LENGTH,
                             blank=True,
                             default='user',
                             verbose_name='Role')

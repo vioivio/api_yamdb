@@ -4,6 +4,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from rest_framework import filters, mixins, status, views, viewsets
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -16,7 +17,6 @@ from .filters import TitleFilter
 from .permissions import (AdminOrReadOnly,
                           OnlyAdminPermission,
                           PrivilegeOrReadOnly,
-                          UserProfilePermission,
                           )
 from .serializers import (CategorySerializer,
                           CommentSerializer,
@@ -37,7 +37,6 @@ class SignUpCreate(views.APIView):
         serializer.save()
         email = serializer.data.get('email')
         username = serializer.data.get('username')
-        #user, code = User.objects.get_or_create(email=email, username=username)
         user = get_object_or_404(User, email=email, username=username)
         confirmation_code = default_token_generator.make_token(user)
         send_mail(
@@ -54,18 +53,28 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated,
-                          OnlyAdminPermission | UserProfilePermission]
+                          OnlyAdminPermission]
     filter_backends = (filters.SearchFilter,)
     search_fields = ('username',)
     lookup_url_kwarg = 'username'
     lookup_field = 'username'
 
-    def get_object(self):
-        if self.kwargs['username'] == 'me':
-            user = self.request.user
-            self.check_object_permissions(self.request, user)
-            return user
-        return super().get_object()
+    @action(
+        detail=False,
+        methods=(['GET', 'PATCH']),
+        permission_classes=[IsAuthenticated],
+    )
+    def me(self, request):
+        if request.method == 'GET':
+            serializer = UserSerializer(request.user)
+            return Response(serializer.data)
+        serializer = UserSerializer(request.user,
+                                    data=request.data,
+                                    context={'request': request},
+                                    partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
 
     def destroy(self, request, *args, **kwargs):
         if self.kwargs['username'] == 'me':

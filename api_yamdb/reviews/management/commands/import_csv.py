@@ -40,5 +40,4 @@ class Command(BaseCommand):
                     model.objects.bulk_create(data_list)
             except Exception as err:
                 self.stdout.write(self.style.ERROR(f'{err}'))
-            else:
-                self.stdout.write(self.style.SUCCESS('Upload Complete!'))
+        self.stdout.write(self.style.SUCCESS('Upload Complete!'))

@@ -1,7 +1,6 @@
 from django.core.validators import (
     MaxValueValidator,
-    MinValueValidator,
-    RegexValidator)
+    MinValueValidator)
 from django.db import models
 
 from .validators import validate_date
@@ -14,8 +13,7 @@ class Category(models.Model):
     name = models.CharField('Название категории', max_length=256)
     slug = models.SlugField(
         unique=True,
-        max_length=50,
-        validators=[RegexValidator(regex='^[a-zA-Z0-9_]+$')]
+        max_length=50
     )
 
     class Meta:
@@ -33,8 +31,7 @@ class Genre(models.Model):
         max_length=200
     )
     slug = models.SlugField(
-        unique=True,
-        db_index=True
+        unique=True
     )
 
     class Meta:
@@ -52,7 +49,7 @@ class Title(models.Model):
         max_length=200,
         db_index=True
     )
-    year = models.IntegerField(
+    year = models.PositiveSmallIntegerField(
         'Год выпуска',
         validators=(validate_date,)
     )
