@@ -1,44 +1,44 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.core.validators import RegexValidator
+from django.contrib.auth.validators import UnicodeUsernameValidator
 
-ROLES = (
+from .max_length import (EMAIL_LENGTH,
+                         USERNAME_LENGTH,
+                         BIO_LENGTH,
+                         ROLE_LENGTH)
+
+ROLE_CHOICE = (
     ('admin', 'admin'),
     ('moderator', 'moderator'),
     ('user', 'user')
 )
+ADMIN = 'admin'
+
+MODERATOR = 'moderator'
 
 
 class User(AbstractUser):
-    email = models.EmailField(max_length=254,
+    email = models.EmailField(max_length=EMAIL_LENGTH,
                               unique=True,
                               verbose_name='email')
-    username = models.CharField(max_length=150,
+
+    username = models.CharField(max_length=USERNAME_LENGTH,
                                 unique=True,
-                                validators=[RegexValidator
-                                            (regex='^[a-zA-Z0-9_]+$')],
-                                verbose_name='username')
-    bio = models.CharField(max_length=300,
+                                validators=[UnicodeUsernameValidator()])
+
+    bio = models.CharField(max_length=BIO_LENGTH,
                            blank=True,
                            verbose_name='biography')
-    role = models.CharField(choices=ROLES,
-                            max_length=30,
+    role = models.CharField(choices=ROLE_CHOICE,
+                            max_length=ROLE_LENGTH,
                             blank=True,
                             default='user',
                             verbose_name='Role')
-    confirmation_code = models.CharField(max_length=254,
-                                         blank=True,
-                                         null=True,
-                                         verbose_name='confirmation_code')
 
     @property
     def is_admin(self):
-        return self.role == 'admin' or self.is_superuser
+        return self.role == ADMIN or self.is_superuser
 
     @property
     def is_moderator(self):
-        return self.role == 'moderator' or self.is_superuser
-
-    @property
-    def is_user(self):
-        return self.role == 'user' or self.is_superuser
+        return self.role == MODERATOR or self.is_staff
