@@ -7,15 +7,15 @@ from .constants import (EMAIL_LENGTH,
                          BIO_LENGTH,
                          ROLE_LENGTH)
 
-
 ADMIN = 'admin'
 MODERATOR = 'moderator'
 USER = 'user'
+
 ROLE_CHOICE = (
     (ADMIN, ADMIN),
     (MODERATOR, MODERATOR),
-    (USER, USER)
-)
+    (USER, USER))
+
 
 class User(AbstractUser):
     email = models.EmailField(max_length=EMAIL_LENGTH,
