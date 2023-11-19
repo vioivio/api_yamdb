@@ -2,20 +2,20 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 
-from .max_length import (EMAIL_LENGTH,
+from .constants import (EMAIL_LENGTH,
                          USERNAME_LENGTH,
                          BIO_LENGTH,
                          ROLE_LENGTH)
 
-ROLE_CHOICE = (
-    ('admin', 'admin'),
-    ('moderator', 'moderator'),
-    ('user', 'user')
-)
+
 ADMIN = 'admin'
-
 MODERATOR = 'moderator'
-
+USER = 'user'
+ROLE_CHOICE = (
+    (ADMIN, ADMIN),
+    (MODERATOR, MODERATOR),
+    (USER, USER)
+)
 
 class User(AbstractUser):
     email = models.EmailField(max_length=EMAIL_LENGTH,

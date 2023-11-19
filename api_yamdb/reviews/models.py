@@ -3,6 +3,13 @@ from django.core.validators import (
     MinValueValidator)
 from django.db import models
 
+from .constants import (
+    CATEGORY_NAME_LENGTH,
+    CATEGORY_SLUG_LENGTH,
+    NAME_LENGTH,
+    DESCRIPTION_LENGTH,
+    TEXT_LENGTH,
+)
 from .validators import validate_date
 from user.models import User
 
@@ -10,10 +17,10 @@ from user.models import User
 class Category(models.Model):
     """Модель категории."""
 
-    name = models.CharField('Название категории', max_length=256)
+    name = models.CharField('Название категории', max_length=CATEGORY_NAME_LENGTH)
     slug = models.SlugField(
         unique=True,
-        max_length=50
+        max_length=CATEGORY_SLUG_LENGTH
     )
 
     class Meta:
@@ -28,7 +35,7 @@ class Genre(models.Model):
 
     name = models.CharField(
         'Жанр',
-        max_length=200
+        max_length=NAME_LENGTH
     )
     slug = models.SlugField(
         unique=True
@@ -46,7 +53,7 @@ class Title(models.Model):
 
     name = models.CharField(
         'Название произведения',
-        max_length=200,
+        max_length=NAME_LENGTH,
         db_index=True
     )
     year = models.PositiveSmallIntegerField(
@@ -62,7 +69,7 @@ class Title(models.Model):
     )
     description = models.TextField(
         'Описание произведения',
-        max_length=255,
+        max_length=DESCRIPTION_LENGTH,
         null=True,
         blank=True
     )
@@ -87,7 +94,7 @@ class Review(models.Model):
         related_name='reviews',
     )
     text = models.CharField(
-        max_length=200
+        max_length=TEXT_LENGTH
     )
     author = models.ForeignKey(
         User,
@@ -131,7 +138,7 @@ class Comment(models.Model):
     )
     text = models.CharField(
         'Тело комментария',
-        max_length=200
+        max_length=TEXT_LENGTH
     )
     author = models.ForeignKey(
         User,
