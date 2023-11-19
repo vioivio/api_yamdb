@@ -3,14 +3,12 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 
 from .constants import (EMAIL_LENGTH,
-                        USERNAME_LENGTH,
-                        BIO_LENGTH,
-                        ROLE_LENGTH)
+                         USERNAME_LENGTH,
+                         BIO_LENGTH,
+                         ROLE_LENGTH)
 
 ADMIN = 'admin'
-
 MODERATOR = 'moderator'
-
 USER = 'user'
 
 ROLE_CHOICE = (
