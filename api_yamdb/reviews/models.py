@@ -18,7 +18,8 @@ from user.models import User
 class Category(models.Model):
     """Модель категории."""
 
-    name = models.CharField('Название категории', max_length=CATEGORY_NAME_LENGTH)
+    name = models.CharField('Название категории',
+                            max_length=CATEGORY_NAME_LENGTH)
     slug = models.SlugField(
         unique=True,
         max_length=CATEGORY_SLUG_LENGTH
