@@ -17,20 +17,13 @@ class SignUpSerializer(serializers.Serializer):
     def create(self, validated_data):
         email = validated_data['email']
         username = validated_data['username']
-        user, code = User.objects.get_or_create(email=email, username=username)
+        try:
+            user, code = User.objects.get_or_create(email=email,
+                                                    username=username)
+        except Exception:
+            raise serializers.ValidationError({"Signup error":
+                                               "Invalid email or username"})
         return user
-
-    def validate(self, attrs):
-        if (not User.objects.filter(username=attrs['username']).exists()
-           and User.objects.filter(email=attrs['email']).exists()):
-            raise serializers.ValidationError({"Signup error":
-                                               "Email занят"})
-
-        elif (User.objects.filter(username=attrs['username']).exists()
-              and not User.objects.filter(email=attrs['email']).exists()):
-            raise serializers.ValidationError({"Signup error":
-                                               "Username занят"})
-        return attrs
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -109,7 +102,6 @@ class ReviewSerializer(serializers.ModelSerializer):
         read_only=True,
         slug_field='username'
     )
-    score = serializers.IntegerField()
     title = serializers.PrimaryKeyRelatedField(read_only=True)
 
     def validate(self, value):
@@ -127,13 +119,6 @@ class ReviewSerializer(serializers.ModelSerializer):
             )
         return value
 
-    def validate_score(self, attrs):
-        if attrs < 1 or attrs > 10:
-            raise serializers.ValidationError(
-                'Оценка может быть от 1 до 10'
-            )
-        return attrs
-
     class Meta:
         fields = '__all__'
         model = Review
@@ -144,8 +129,8 @@ class CommentSerializer(serializers.ModelSerializer):
         read_only=True,
         slug_field='username'
     )
-    review = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         fields = '__all__'
         model = Comment
+        read_only_fields = ['review']

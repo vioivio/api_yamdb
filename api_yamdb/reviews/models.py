@@ -3,7 +3,7 @@ from django.core.validators import (
     MinValueValidator)
 from django.db import models
 
-from .validators import validate_date
+from .validators import validate_date, validate_score
 from user.models import User
 
 
@@ -51,7 +51,7 @@ class Title(models.Model):
     )
     year = models.PositiveSmallIntegerField(
         'Год выпуска',
-        validators=(validate_date,)
+        validators=(validate_date, validate_score)
     )
     category = models.ForeignKey(
         Category,
