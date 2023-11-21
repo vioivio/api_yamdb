@@ -11,9 +11,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django_filters.rest_framework import DjangoFilterBackend
 
 from reviews.models import Category, Genre, Review, Title
-
 from user.models import User
-
 from .filters import TitleFilter
 from .permissions import (
     AdminOrReadOnly,
