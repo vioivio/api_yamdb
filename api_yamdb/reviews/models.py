@@ -1,7 +1,6 @@
 from django.db import models
 
 from user.models import User
-
 from .constants import (
     CATEGORY_NAME_LENGTH,
     CATEGORY_SLUG_LENGTH,
@@ -9,7 +8,10 @@ from .constants import (
     NAME_LENGTH,
     TEXT_LENGTH,
 )
-from .validators import validate_date, validate_score
+from .validators import (
+    validate_date,
+    validate_score
+)
 
 
 class Category(models.Model):
