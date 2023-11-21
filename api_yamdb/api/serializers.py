@@ -1,16 +1,20 @@
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.validators import UnicodeUsernameValidator
+from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from reviews.models import Category, Comment, Genre, Review, Title
+
+from user.constants import (EMAIL_LENGTH,
+                            USERNAME_LENGTH)
 from user.models import User
 
-from .validators import validate_me
+from user.validators import validate_me
 
 
 class SignUpSerializer(serializers.Serializer):
-    email = serializers.EmailField(max_length=254)
-    username = serializers.CharField(max_length=150,
+    email = serializers.EmailField(max_length=EMAIL_LENGTH)
+    username = serializers.CharField(max_length=USERNAME_LENGTH,
                                      validators=[UnicodeUsernameValidator(),
                                                  validate_me])
 
@@ -20,7 +24,7 @@ class SignUpSerializer(serializers.Serializer):
         try:
             user, code = User.objects.get_or_create(email=email,
                                                     username=username)
-        except Exception:
+        except IntegrityError:
             raise serializers.ValidationError({"Signup error":
                                                "Invalid email or username"})
         return user

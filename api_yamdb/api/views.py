@@ -11,9 +11,10 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django_filters.rest_framework import DjangoFilterBackend
 
 from reviews.models import Category, Genre, Review, Title
-from user.models import User
-from .filters import TitleFilter
 
+from user.models import User
+
+from .filters import TitleFilter
 from .permissions import (AdminOrReadOnly,
                           OnlyAdminPermission,
                           PrivilegeOrReadOnly,
@@ -35,7 +36,7 @@ class SignUpCreate(views.APIView):
         serializer = SignUpSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        email = serializer.data.get('email')
+        email = user.email
         confirmation_code = default_token_generator.make_token(user)
         send_mail(
             subject='Confirmation code',

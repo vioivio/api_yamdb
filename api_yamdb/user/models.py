@@ -6,6 +6,7 @@ from .constants import (EMAIL_LENGTH,
                         USERNAME_LENGTH,
                         BIO_LENGTH,
                         ROLE_LENGTH)
+from .validators import validate_me
 
 ADMIN = 'admin'
 MODERATOR = 'moderator'
@@ -24,7 +25,8 @@ class User(AbstractUser):
 
     username = models.CharField(max_length=USERNAME_LENGTH,
                                 unique=True,
-                                validators=[UnicodeUsernameValidator()])
+                                validators=[UnicodeUsernameValidator(),
+                                            validate_me])
 
     bio = models.CharField(max_length=BIO_LENGTH,
                            blank=True,

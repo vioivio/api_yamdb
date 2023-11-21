@@ -1,18 +1,15 @@
-from django.core.validators import (
-    MaxValueValidator,
-    MinValueValidator)
 from django.db import models
+
+from user.models import User
 
 from .constants import (
     CATEGORY_NAME_LENGTH,
     CATEGORY_SLUG_LENGTH,
-    NAME_LENGTH,
     DESCRIPTION_LENGTH,
+    NAME_LENGTH,
     TEXT_LENGTH,
 )
 from .validators import validate_date, validate_score
-
-from user.models import User
 
 
 class Category(models.Model):
@@ -60,7 +57,7 @@ class Title(models.Model):
     )
     year = models.PositiveSmallIntegerField(
         'Год выпуска',
-        validators=(validate_date, validate_score)
+        validators=(validate_date,)
     )
     category = models.ForeignKey(
         Category,
@@ -103,12 +100,9 @@ class Review(models.Model):
         on_delete=models.CASCADE,
         related_name='reviews',
     )
-    score = models.IntegerField(
+    score = models.PositiveSmallIntegerField(
         'Оценка',
-        validators=(
-            MinValueValidator(1),
-            MaxValueValidator(10)
-        ),
+        validators=[validate_score],
         error_messages={'validators': 'Оценка должна быть в диапазоне 1-10'}
     )
     pub_date = models.DateTimeField(

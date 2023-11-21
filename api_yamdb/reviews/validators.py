@@ -11,7 +11,7 @@ def validate_date(value):
 
 
 def validate_score(value):
-    if 10 > value > 0:
+    if not (0 < value < 11):
         raise ValidationError(
             'Оценка не может быть больше 10 и меньше 0'
         )
