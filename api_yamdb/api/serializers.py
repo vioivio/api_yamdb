@@ -3,12 +3,19 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-from reviews.models import Category, Comment, Genre, Review, Title
 
-from user.constants import (EMAIL_LENGTH,
-                            USERNAME_LENGTH)
+from reviews.models import (
+    Category,
+    Comment,
+    Genre,
+    Review,
+    Title
+)
+from user.constants import (
+    EMAIL_LENGTH,
+    USERNAME_LENGTH
+)
 from user.models import User
-
 from user.validators import validate_me
 
 
