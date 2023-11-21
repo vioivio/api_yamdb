@@ -15,20 +15,22 @@ from reviews.models import Category, Genre, Review, Title
 from user.models import User
 
 from .filters import TitleFilter
-from .permissions import (AdminOrReadOnly,
-                          OnlyAdminPermission,
-                          PrivilegeOrReadOnly,
-                          )
-from .serializers import (CategorySerializer,
-                          CommentSerializer,
-                          GenreSerializer,
-                          ReviewSerializer,
-                          SignUpSerializer,
-                          TitleSerializer,
-                          TokenSerializer,
-                          UserSerializer,
-                          TitleCreateSerializer,
-                          )
+from .permissions import (
+    AdminOrReadOnly,
+    OnlyAdminPermission,
+    PrivilegeOrReadOnly,
+)
+from .serializers import (
+    CategorySerializer,
+    CommentSerializer,
+    GenreSerializer,
+    ReviewSerializer,
+    SignUpSerializer,
+    TitleCreateSerializer,
+    TitleSerializer,
+    TokenSerializer,
+    UserSerializer,
+)
 
 
 class SignUpCreate(views.APIView):
